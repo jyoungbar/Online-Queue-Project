@@ -1,0 +1,15 @@
+{
+  "name": "online_queue",
+  "version": "1.0.0",
+  "description": "Resources:\r https://www.codershood.info/2016/01/24/sending-message-specific-user-socket-io/\r https://www.scaler.com/topics/nodejs/socket-io-node-js/\r https://levelup.gitconnected.com/set-up-and-run-a-simple-node-server-project-38b403a3dc09",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.1"
+  }
+}

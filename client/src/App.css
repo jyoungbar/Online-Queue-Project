@@ -1,0 +1,99 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.main {
+/*  background-color: grey;*/
+}
+
+.perrow3 {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.col {
+  margin: auto;
+  max-width: 40%;
+  min-width: 33%;
+/*  background-color: orange;*/
+}
+
+.delete-btn {
+/*  flex-flow: row-reverse wrap-reverse;*/
+  float: right;
+/*  margin-left:50%;*/
+/*  box-align: right;*/
+}
+
+.inline {
+  display: inline-block;
+/*  width: 100%;*/
+  background-color: orange;
+}
+
+.queue-list {
+/*  border: 2px solid blue;*/
+/*  width: 33%;*/
+}
+
+/*ListGroup.Item {
+  border: 2px solid black;
+}*/
+
+.speaker-li {
+/*  border: 2px solid black;*/
+  margin: auto;
+/*  width: 100%;*/
+/*  background-color: orange;*/
+}
+
+.speaker-name {
+/*  display: inline-block;*/
+  width: 25%;
+  text-align: center;
+}
+
+.times-spoken {
+/*  display: inline-block;*/
+/*  margin: 5%;*/
+  /*padding-left: 5%;
+  padding-right: 5%;*/
+/*  border: 2px solid black;*/
+  width: 37.5%;
+  text-align: center;
+}
