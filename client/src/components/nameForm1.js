@@ -81,15 +81,20 @@ const NameForm = () => {
 
   return (
   	<div>
-      <button onClick={showModal}>Hello, {name}</button>
+      <button onClick={showModal}>Hello, {sessionStorage.getItem("name")}</button>
       <Modal 
         show={show}
       >
         <Modal.Header>
           <Modal.Title>Hello
-          {name !== "" && (
+          {/*name !== "" && (
             <>
               , {name}
+            </>
+          )*/
+          sessionStorage.getItem("name") != null && (
+            <>
+              , {sessionStorage.getItem("name")}
             </>
           )}!
           </Modal.Title>
