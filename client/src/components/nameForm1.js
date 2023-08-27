@@ -4,8 +4,11 @@ import React, { useEffect, useState } from 'react';
 // import Modal from 'react-modal';
 import Modal from 'react-bootstrap/Modal';
 import Cookies from 'js-cookie';
+import { BrowserRouter as useParams} from 'react-router-dom';
 import CheckBox from './checkBox';
 import {socket} from '../socket';
+// import { BrowserRouter as useParams} from 'react-router-dom';
+
 
 // Modal.setAppElement('#root');
 
@@ -19,6 +22,7 @@ const NameForm = () => {
   if(sessionStorage.getItem("show") === null) {
     sessionStorage.setItem("show", true);
   }
+  // const {meetingid} = useParams();
 
   // const [show, setShow] = useState(true);
   const [show, setShow] = useState((sessionStorage.getItem("show") === 'true'));
@@ -64,7 +68,9 @@ const NameForm = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     // var status = 5;
-    socket.emit('name form', name, status);
+    // console.log(meetingid);
+    console.log(Cookies.get('meetingid'));
+    socket.emit('name form', name, status, /*meetingid*/ /*Cookies.get('meetingid')*/ sessionStorage.getItem("meetingid"));
     sessionStorage.setItem("name", name);
     sessionStorage.setItem("status", status);
     sessionStorage.setItem("show", false);
@@ -72,11 +78,12 @@ const NameForm = () => {
     setShow(false);
 
     //create cookie for userID if one doesn't exist
-    console.log(Cookies.get('userID'));
+    // console.log(Cookies.get('userID'));
     if(!Cookies.get('userID') || Cookies.get('userID') == "") {
       var newID = Math.floor(Math.random()*10000000000);
       Cookies.set('userID', newID, {expires: 2});
     }
+    // Cookies.set('meetingid', );
   }
 
   return (
@@ -92,7 +99,7 @@ const NameForm = () => {
               , {name}
             </>
           )*/
-          sessionStorage.getItem("name") != null && (
+          sessionStorage.getItem("name") !== "" && (
             <>
               , {sessionStorage.getItem("name")}
             </>

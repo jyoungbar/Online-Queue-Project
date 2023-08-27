@@ -58,8 +58,17 @@ meetingids.set(100, new Map());
 app.get('/meetingids', (req, res)=> {
   // console.log(JSON.stringify(meetingids));
   // console.log(Array.from(meetingids));
+  console.log([...meetingids]);
   res.send([...meetingids]);
   // res.send(meetingids);
+});
+
+//creating a new meeting
+app.put('/meetingids', (req, res) => {
+  console.log(req.body.MeetingID);
+  meetingids.set(req.body.MeetingID, new Map());
+  console.log([...meetingids]);
+  res.send("done");
 });
 
 //endpoint for different meeting addresses
@@ -99,8 +108,8 @@ app.get('/meeting/:meetingid', (req, res) => {
 // }
 
 //emit arrays containing the names of everyone in each room
-function getNamesByRoom() {
-  var votingRoom = io.sockets.adapter.rooms.get("voting");
+function getNamesByRoom(meetingid) {
+  var votingRoom = io.sockets.adapter.rooms.get("voting" + meetingid);
   var votingNames = [];
   for(const clientId of votingRoom ? votingRoom : []) {
     const clientSocket = io.sockets.sockets.get(clientId);
@@ -111,7 +120,7 @@ function getNamesByRoom() {
     //   votingNames.push(name);
     // });
   }
-  var activeRoom = io.sockets.adapter.rooms.get("active");
+  var activeRoom = io.sockets.adapter.rooms.get("active" + meetingid);
   var activeNames = [];
   for(const clientId of activeRoom ? activeRoom : []) {
     const clientSocket = io.sockets.sockets.get(clientId);
@@ -121,7 +130,7 @@ function getNamesByRoom() {
     //   activeNames.push(name);
     // });
   }
-  var assocRoom = io.sockets.adapter.rooms.get("associate");
+  var assocRoom = io.sockets.adapter.rooms.get("associate" + meetingid);
   var assocNames = [];
   for(const clientId of assocRoom ? assocRoom : []) {
     const clientSocket = io.sockets.sockets.get(clientId);
@@ -131,7 +140,7 @@ function getNamesByRoom() {
     //   assocNames.push(name);
     // });
   }
-  var noneRoom = io.sockets.adapter.rooms.get("none");
+  var noneRoom = io.sockets.adapter.rooms.get("none" + meetingid);
   var noneNames = [];
   for(const clientId of noneRoom ? noneRoom : []) {
     const clientSocket = io.sockets.sockets.get(clientId);
@@ -155,14 +164,14 @@ function getNamesByRoom() {
   //   } else if(status == 3) {
   //     noneNames.push(name);
   //   }
-  io.emit('name arrays', votingNames, activeNames, assocNames, noneNames);
+  io.to("voting" + meetingid).to("active" + meetingid).to("associate" + meetingid).to("none" + meetingid).emit('name arrays', votingNames, activeNames, assocNames, noneNames);
   // });
 }
 
-function handleNameForm(name, status) {
-  var votingNames = [];
-  var activeNames = [];
-}
+// function handleNameForm(name, status) {
+//   var votingNames = [];
+//   var activeNames = [];
+// }
 
 //socket.io stuff
 // let count = 0;
@@ -173,88 +182,95 @@ io.on('connection', (socket) => {
   //send and save cookie here
 
   //process submitted name form
-  socket.on('name form', (name, status) => {
+  socket.on('name form', (name, status, meetingid) => {
     console.log("status: " + status);
     socket.name = name;
-    socket.meetingid = 100; //will change later to inputed meetingid
+    // socket.meetingid = 100; //will change later to inputed meetingid
+    socket.meetingid = parseInt(meetingid);
     console.log("name: " + socket.name);
-    //will only process brother status, name will be stored on client side
-    //send people to their rooms based on status and leave any other rooms they were in
-    if(status == 0) {
-      // console.log("joined voting");
-      socket.join("voting");
-      socket.leave("active");
-      socket.leave("associate");
-      socket.leave("none");
-    } else if(status == 1) {
-      socket.join("active");
-      socket.leave("voting");
-      socket.leave("associate");
-      socket.leave("none");
-    } else if(status == 2) {
-      socket.join("associate");
-      socket.leave("active");
-      socket.leave("voting");
-      socket.leave("none");
-    } else if(status == 3) {
-      socket.join("none");
-      socket.leave("active");
-      socket.leave("associate");
-      socket.leave("voting");
-    }
-
     console.log(socket.request.headers.cookie);
     if(socket.request.headers.cookie) {
       const cookies = cookie.parse(socket.request.headers.cookie);
       console.log(cookies);
       socket.userID = cookies.userID;
+      // socket.meetingid = parseInt(cookies.meetingid);
     }
-    
+    console.log("meetingid: " + socket.meetingid);
+    //will only process brother status, name will be stored on client side
+    //send people to their rooms based on status and leave any other rooms they were in
+    if(status == 0) {
+      // console.log("joined voting");
+      socket.join("voting" + socket.meetingid);
+      socket.leave("active" + socket.meetingid);
+      socket.leave("associate" + socket.meetingid);
+      socket.leave("none" + socket.meetingid);
+    } else if(status == 1) {
+      socket.join("active" + socket.meetingid);
+      socket.leave("voting" + socket.meetingid);
+      socket.leave("associate" + socket.meetingid);
+      socket.leave("none" + socket.meetingid);
+    } else if(status == 2) {
+      socket.join("associate" + socket.meetingid);
+      socket.leave("active" + socket.meetingid);
+      socket.leave("voting" + socket.meetingid);
+      socket.leave("none" + socket.meetingid);
+    } else if(status == 3) {
+      socket.join("none" + socket.meetingid);
+      socket.leave("active" + socket.meetingid);
+      socket.leave("associate" + socket.meetingid);
+      socket.leave("voting" + socket.meetingid);
+    }    
 
     // countUsers();
-    getNamesByRoom();
+    getNamesByRoom(socket.meetingid);
     // io.emit('count', countUsers());
   });
 
   socket.on('refreshNumUsers', () => {
     // countUsers();
-    getNamesByRoom()
+    getNamesByRoom(socket.meetingid)
     // io.emit('count', countUsers());
   });
   socket.on('disconnect', (reason) => {
     // countUsers();
-    getNamesByRoom()
+    getNamesByRoom(socket.meetingid)
     // io.emit('count', countUsers());
   });
 
   socket.on('getMeetingIds', () => {
     console.log("meetingids", meetingids);
-    io.emit('returnMeetingIds', meetingids);
+    io.to(socket.id).emit('returnMeetingIds', meetingids);
   });
 
   socket.on('new queue', (/*meetingid,*/queueName) => {
     //add Priority Queue Object to meetingids
     //send out queue added message
+    console.log(meetingids);
+    // meetingids.set(socket.meetingid, "blah");
+    // console.log(meetingids);
     if(!meetingids.get(socket.meetingid).has(queueName)) {
       var queue = new PriorityQueue(/*queueName*/);
       meetingids.get(socket.meetingid).set(queueName, queue);
-      io.emit('queue added', queueName);
+      io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('queue added', queueName);
     }
   });
 
   socket.on('delete queue', (queueName) => {
     console.log(queueName, "delete");
     meetingids.get(socket.meetingid).delete(queueName);
-    io.emit('queue deleted', queueName);
+    io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('queue deleted', queueName);
   });
 
   socket.on('get all queues', () => {
     var queueNames = [];
     console.log(socket.name);
     if(socket.meetingid) {
-    for(const queueName of meetingids.get(socket.meetingid).keys()) {
-      queueNames.push(queueName);
-    }
+      console.log(meetingids);
+      // meetingids.set(socket.meetingid, new Map());
+      // console.log(meetingids);
+      for(const queueName of meetingids.get(socket.meetingid).keys()) {
+        queueNames.push(queueName);
+      }
     }
     io.to(socket.id).emit('all queues', queueNames);
   });
@@ -267,7 +283,7 @@ io.on('connection', (socket) => {
     }
     console.log(queueName);
     console.log("after popping", speakers);
-    io.emit('names in queue'+queueName, speakers);
+    io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('names in queue'+queueName, speakers);
   });
 
   socket.on('join queue', (queueName) => {
@@ -278,7 +294,7 @@ io.on('connection', (socket) => {
     }
     console.log(queueName);
     console.log("after joining", speakers);
-    io.emit('names in queue'+queueName, speakers);
+    io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('names in queue'+queueName, speakers);
   });
 
   socket.on('leave queue', (queueName) => {
@@ -286,23 +302,23 @@ io.on('connection', (socket) => {
     var speakers = meetingids.get(socket.meetingid).get(queueName).items;
     console.log(queueName);
     console.log("after leaving:", speakers);
-    io.emit('names in queue'+queueName, speakers);
+    io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('names in queue'+queueName, speakers);
   });
 
   socket.on('get names in queue', (queueName) => {
     var speakers = [];
     if(meetingids.get(socket.meetingid).has(queueName)) {
       speakers = meetingids.get(socket.meetingid).get(queueName).items;
-      io.emit('open/close queue'+queueName, meetingids.get(socket.meetingid).get(queueName).isClosed);
+      io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('open/close queue'+queueName, meetingids.get(socket.meetingid).get(queueName).isClosed);
     }
     console.log(queueName);
-    console.log("get names in queue:", speakers);
+    // console.log("get names in queue:", speakers);
     io.to(socket.id).emit('names in queue'+queueName, speakers);
   });
 
   socket.on('from admin open/close queue', (queueName, isClosed) => {
     meetingids.get(socket.meetingid).get(queueName).isClosed = isClosed;
-    io.emit('open/close queue'+queueName, isClosed);
+    io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('open/close queue'+queueName, isClosed);
   });
 });
 

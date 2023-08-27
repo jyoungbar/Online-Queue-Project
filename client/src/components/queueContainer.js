@@ -25,7 +25,7 @@ const QueueContainer = () => {
   // socket.on('connect', () => {
   useEffect(() => {
     if(sessionStorage.getItem('status') !== null) {
-      socket.emit('name form', sessionStorage.getItem('name'), sessionStorage.getItem('status'));
+      socket.emit('name form', sessionStorage.getItem('name'), sessionStorage.getItem('status'), sessionStorage.getItem('meetingid'));
     }
     socket.emit('get all queues');
   },[]);
