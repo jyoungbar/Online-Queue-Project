@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 import {socket} from '../socket';
+import Cookies from 'js-cookie';
 
 const Queue = ({queueName}) => {
   const [speakers, setSpeakers] = useState([]);
@@ -84,11 +85,13 @@ const Queue = ({queueName}) => {
         ))}
       </ListGroup>
       
-      <Button variant="secondary" onClick={handleNext}>Move to next Speaker</Button>
-      {!closed && (
+      {Cookies.get('admin') == sessionStorage.getItem('meetingid') && (
+        <Button variant="secondary" onClick={handleNext}>Move to next Speaker</Button>
+      )}
+      {Cookies.get('admin') == sessionStorage.getItem('meetingid') && !closed && (
         <Button className="close-btn" variant="secondary" onClick={(e) => handleClose(e,true)}>Close</Button>
       )}
-      {closed && (
+      {Cookies.get('admin') == sessionStorage.getItem('meetingid') && closed && (
         <Button className="open-btn" variant="secondary" onClick={(e) => handleClose(e,false)}>Open</Button>
       )}
       

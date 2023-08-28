@@ -6,9 +6,9 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Main from './pages/main';
 import Admin from './pages/admin';
 import NotFound from './pages/404';
-import {socket} from './socket';
+// import {socket} from './socket';
 import Landing from './pages/landing';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 
 // var meetingids = new Map();
 // socket.emit('getMeetingIds');
@@ -23,7 +23,8 @@ function MeetingFinder() {
   // var meetingids = new Map();
   // var hasID = meetingids.has(meetingid);
   function gethasID() {
-    fetch('http://192.168.1.40:3000/meetingids', {
+    // fetch('http://192.168.1.40:3000/meetingids', {
+    fetch('http://localhost:3000/meetingids', {
       "method": "GET"
     })
       .then(response => response.json())
@@ -36,6 +37,7 @@ function MeetingFinder() {
         for(var i = 0; i < meetingids.length; i++) {
           if(meetingids[i].includes(parseInt(meetingid))) {
             setHasID(true);
+            break;
           }
         }
         // console.log(meetingid, meetingids[0]);

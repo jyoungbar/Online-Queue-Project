@@ -8,6 +8,7 @@ import Button from 'react-bootstrap/Button';
 // import Col from 'react-bootstrap/Col';
 import Queue from './queue';
 import {socket} from '../socket';
+import Cookies from 'js-cookie';
 
 const QueueContainer = () => {
   // if(sessionStorage.getItem("queueNames") === null) {
@@ -67,10 +68,13 @@ const QueueContainer = () => {
 
   return (
     <div>
-      <form action="" id="queueNameForm" onSubmit={handleSubmit}>
-        <input type="text" aria-label="Queue Name Input" value={currName} onChange={(e)=> setCurrName(e.target.value)} />
-        <input type="submit" value="Add New Queue"/>
-      </form>
+      {Cookies.get('admin') == sessionStorage.getItem('meetingid') && (
+        <form action="" id="queueNameForm" onSubmit={handleSubmit}>
+          <input type="text" aria-label="Queue Name Input" value={currName} onChange={(e)=> setCurrName(e.target.value)} />
+          <input type="submit" value="Add New Queue"/>
+        </form>
+      )}
+      
       
       {/*queueNames.map((name, index) => (
         <div key={index} className="inline">

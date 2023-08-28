@@ -257,7 +257,9 @@ io.on('connection', (socket) => {
 
   socket.on('delete queue', (queueName) => {
     console.log(queueName, "delete");
-    meetingids.get(socket.meetingid).delete(queueName);
+    if(meetingids.get(socket.meetingid)) {
+      meetingids.get(socket.meetingid).delete(queueName);
+    }
     io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('queue deleted', queueName);
   });
 
@@ -307,7 +309,7 @@ io.on('connection', (socket) => {
 
   socket.on('get names in queue', (queueName) => {
     var speakers = [];
-    if(meetingids.get(socket.meetingid).has(queueName)) {
+    if(meetingids.get(socket.meetingid) && meetingids.get(socket.meetingid).has(queueName)) {
       speakers = meetingids.get(socket.meetingid).get(queueName).items;
       io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('open/close queue'+queueName, meetingids.get(socket.meetingid).get(queueName).isClosed);
     }

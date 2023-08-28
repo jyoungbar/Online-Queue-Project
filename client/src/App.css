@@ -38,8 +38,12 @@
 }
 
 .main {
-/*  background-color: grey;*/
+ /* background-color: #E0E0E0; */
 }
+
+/* body {
+  background-color: #E0E0E0;
+} */
 
 .perrow3 {
   display: flex;

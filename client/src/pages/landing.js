@@ -18,7 +18,8 @@ const Landing = () => {
     sessionStorage.setItem('meeetingid', meetingid);
     // socket.emit('name form', "", "", meetingid);
     console.log(meetingid);
-    fetch('http://192.168.1.40:3000/meetingids', {
+    // fetch('http://192.168.1.40:3000/meetingids', {
+    fetch('http://localhost:3000/meetingids', {
       "method": "PUT",
       "headers": { 'Content-Type': 'application/json' },
       "body": JSON.stringify({MeetingID: meetingid})
