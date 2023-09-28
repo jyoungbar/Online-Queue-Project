@@ -252,6 +252,7 @@ io.on('connection', (socket) => {
     if(meetingids.get(socket.meetingid) && !meetingids.get(socket.meetingid).has(queueName)) {
       var queue = new PriorityQueue(/*queueName*/);
       meetingids.get(socket.meetingid).set(queueName, queue);
+      console.log(meetingids.get(socket.meetingid));
       io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('queue added', queueName);
     }
   });
@@ -270,7 +271,7 @@ io.on('connection', (socket) => {
     if(socket.meetingid) {
       // console.log(meetingids);
       // meetingids.set(socket.meetingid, new Map());
-      // console.log(meetingids);
+      console.log(meetingids);
       console.log("right before: ", socket.meetingid);
       for(const queueName of meetingids.get(socket.meetingid).keys()) {
         queueNames.push(queueName);
