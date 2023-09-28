@@ -268,7 +268,7 @@ io.on('connection', (socket) => {
   socket.on('get all queues', () => {
     var queueNames = [];
     // console.log(socket.name);
-    if(socket.meetingid) {
+    if(socket.meetingid && meetingids.get(socket.meetingid)) {
       // console.log(meetingids);
       // meetingids.set(socket.meetingid, new Map());
       console.log(meetingids);
