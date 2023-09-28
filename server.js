@@ -187,6 +187,7 @@ io.on('connection', (socket) => {
     socket.name = name;
     // socket.meetingid = 100; //will change later to inputed meetingid
     socket.meetingid = parseInt(meetingid);
+    console.log(meetingid);
     // console.log("name: " + socket.name);
     // console.log(socket.request.headers.cookie);
     if(socket.request.headers.cookie) {
@@ -270,6 +271,7 @@ io.on('connection', (socket) => {
       // console.log(meetingids);
       // meetingids.set(socket.meetingid, new Map());
       // console.log(meetingids);
+      console.log("right before: ", socket.meetingid);
       for(const queueName of meetingids.get(socket.meetingid).keys()) {
         queueNames.push(queueName);
       }
