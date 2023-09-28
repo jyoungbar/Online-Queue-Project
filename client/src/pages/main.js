@@ -22,7 +22,7 @@ const Main = () => {
   // useEffect(() => {
     console.log(Cookies.get('meetingid'));
     if(sessionStorage.getItem('status') !== null) {
-      socket.emit('name form', sessionStorage.getItem('name'), sessionStorage.getItem('status'), sessionStorage.getItem("")/*Cookies.get('meetingid')*/ /*meetingid*/);
+      socket.emit('name form', sessionStorage.getItem('name'), sessionStorage.getItem('status'), sessionStorage.getItem("meetingid")/*Cookies.get('meetingid')*/ /*meetingid*/);
     }
   }/*,[]*/);
 

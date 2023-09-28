@@ -70,4 +70,5 @@ https://stackoverflow.com/questions/17973207/how-to-remove-line-break-after-div-
 https://react-bootstrap.netlify.app/docs/components/
 https://dev.to/yuridevat/how-to-create-a-timer-with-react-7b9
 https://www.geeksforgeeks.org/how-to-navigate-on-path-by-button-click-in-react-router/
+https://stackoverflow.com/questions/23045245/one-line-check-if-socket-is-in-given-room
 

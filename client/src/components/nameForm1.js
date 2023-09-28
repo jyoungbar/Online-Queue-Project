@@ -66,24 +66,28 @@ const NameForm = () => {
   // }
 
   const handleSubmit = (event) => {
+    // console.log(event.cancelable);
     event.preventDefault();
     // var status = 5;
     // console.log(meetingid);
-    console.log(Cookies.get('meetingid'));
-    socket.emit('name form', name, status, /*meetingid*/ /*Cookies.get('meetingid')*/ sessionStorage.getItem("meetingid"));
-    sessionStorage.setItem("name", name);
-    sessionStorage.setItem("status", status);
-    sessionStorage.setItem("show", false);
-    // alert({name});
-    setShow(false);
+    if(name != "") {
+      console.log(Cookies.get('meetingid'));
+      socket.emit('name form', name, status, /*meetingid*/ /*Cookies.get('meetingid')*/ sessionStorage.getItem("meetingid"));
+      sessionStorage.setItem("name", name);
+      sessionStorage.setItem("status", status);
+      sessionStorage.setItem("show", false);
+      // alert({name});
+      setShow(false);
 
-    //create cookie for userID if one doesn't exist
-    // console.log(Cookies.get('userID'));
-    if(!Cookies.get('userID') || Cookies.get('userID') == "") {
-      var newID = Math.floor(Math.random()*10000000000);
-      Cookies.set('userID', newID, {expires: 2});
+      //create cookie for userID if one doesn't exist
+      // console.log(Cookies.get('userID'));
+      if(!Cookies.get('userID') || Cookies.get('userID') == "") {
+        var newID = Math.floor(Math.random()*10000000000);
+        Cookies.set('userID', newID, {expires: 2});
+      }
+      // Cookies.set('meetingid', );
     }
-    // Cookies.set('meetingid', );
+
   }
 
   return (

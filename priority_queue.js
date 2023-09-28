@@ -27,6 +27,12 @@ function PriorityQueue() {
 	this.record = new Map();
 	// }
 	this.isClosed = false;
+	this.isVoting = false;
+	this.isRanked = false;
+	// this.votes = [0,0,0];
+	this.voteOptions = [];
+	this.votes = []; //new Map();
+	// this.totalVotes = 0;
 
 	this.add = (name) => {
 		//check if speaker is already in items

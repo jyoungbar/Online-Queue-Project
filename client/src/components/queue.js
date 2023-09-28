@@ -4,17 +4,26 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 import {socket} from '../socket';
 import Cookies from 'js-cookie';
+import VoteContainer from './voteContainer';
+import VoteResults from './voteResults';
+import CheckBox from './checkBox';
+
 
 const Queue = ({queueName}) => {
   const [speakers, setSpeakers] = useState([]);
   const [inQueue, setInQueue] = useState(false);
   const [closed, setClosed] = useState(false);
+  const [voting, setVoting] = useState(false);
+  const [ranked, setRanked] = useState(false);
+  const [voteOptions, setVoteOptions] = useState([]);
+  const [numChoices, setNumChoices] = useState(3);
 
   //request names in queue after refresh
   // socket.on('connect', () => {
   useEffect(() => {
     // console.log("connected through queue", queueName);
     socket.emit('get names in queue', queueName);
+    socket.emit('refresh open/close voting', queueName);
   }, []);
 
   socket.on('names in queue'+queueName, (newSpeakers) => {
@@ -58,6 +67,50 @@ const Queue = ({queueName}) => {
     setInQueue(false);
   }
 
+  const handleVoting = (event, isVoting) => {
+    event.preventDefault();
+    // var voteOptions = [];
+    var newVoteOptions = [];
+    if(!ranked) {
+      newVoteOptions = ["Yes", "No", "Abstain"];
+      // voteOptions = ["Yes", "No", "Abstain"];
+      // setVoteOptions(["Yes", "No", "Abstain"]);
+      // console.log(voteOptions);
+    } else {
+      // var newVoteOptions = [];
+      for(var i = 1; i <= numChoices; i++) {
+        newVoteOptions.push(i);
+      }
+      // setVoteOptions(() => {return newVoteOptions});
+      // setVoteOptions(newVoteOptions);
+      // console.log(voteOptions);
+    }
+    setVoteOptions(newVoteOptions);
+    console.log(voteOptions);
+    socket.emit('from admin open/close voting', queueName, isVoting, ranked, newVoteOptions);
+  }
+  socket.on('open/close voting'+queueName, (isVoting, isRanked, votes) => {
+    setVoting(isVoting);
+    setRanked(isRanked);
+    if(!isVoting) {
+      sessionStorage.setItem("hasVoted"+queueName, false);
+    } else {
+      var newVoteOptions = [];
+      for(var i = 0; i < votes.length; i++) {
+        newVoteOptions.push(votes[i][0]);
+      }
+      setVoteOptions(newVoteOptions);
+    }
+  });
+
+  const handleRankedCheck = () => {
+    setRanked(!ranked);
+  }
+
+  const handleRemove = (e, speaker) => {
+    e.preventDefault();
+    socket.emit('remove speaker', queueName, speaker.name);
+  }
 
   return (
     <div className="queue">
@@ -65,11 +118,16 @@ const Queue = ({queueName}) => {
       {!inQueue && !closed && (
         <Button className="join-btn" variant="secondary" onClick={handleJoin}>Join Queue</Button>
       )}
-      {inQueue && (
+      {/* {speakers[0].name} */}
+      {inQueue && speakers.length > 0 && speakers[0].name != sessionStorage.getItem('name') && (
         <Button className="leave-btn" variant="secondary" onClick={handleLeave}>Leave Queue</Button>
       )}
       <ListGroup as="ol" className="queue-list" numbered>
         {speakers.map((speaker, index) => (
+          <>
+          {Cookies.get('admin') == sessionStorage.getItem('meetingid') && (
+            <Button className="remove-btn" variant="danger" onClick={(e) => handleRemove(e, speaker)}>-</Button>
+          )}
           <ListGroup.Item as="li" key={index} className={`${index == 0 ? "active" : ""}`}>
             <ListGroup className="speaker-li" horizontal>
               <ListGroup.Item className="speaker-name" variant="secondary">Name</ListGroup.Item>
@@ -82,6 +140,7 @@ const Queue = ({queueName}) => {
               <ListGroup.Item className="times-spoken"><b>INSERT TIMER</b></ListGroup.Item>
             </ListGroup>
           </ListGroup.Item>
+          </>
         ))}
       </ListGroup>
       
@@ -93,6 +152,29 @@ const Queue = ({queueName}) => {
       )}
       {Cookies.get('admin') == sessionStorage.getItem('meetingid') && closed && (
         <Button className="open-btn" variant="secondary" onClick={(e) => handleClose(e,false)}>Open</Button>
+      )}
+      {Cookies.get('admin') == sessionStorage.getItem('meetingid') && !voting && (
+        <>
+          <CheckBox 
+            label="Ranked Choice"
+            value={ranked}
+            onChange={() => handleRankedCheck()}
+          />
+          {ranked && (
+            <form onSubmit={(e) => handleVoting(e, true)}>
+              <input type="text" value={numChoices} onChange={(e) => setNumChoices(e.target.value)}/>
+            </form>
+          )}
+          <Button variant="secondary" onClick={(e) => handleVoting(e, true)}>Open Voting</Button>
+        </>
+      )}
+      {Cookies.get('admin') == sessionStorage.getItem('meetingid') && voting && (
+        <Button variant="secondary" onClick={(e) => handleVoting(e, false)}>Close Voting</Button>
+      )}
+      {voting && (
+        <VoteContainer isRanked={ranked} queueName={queueName} voteOptionNames={voteOptions} />
+      ) || (
+        <VoteResults queueName={queueName}/>
       )}
       
     </div>

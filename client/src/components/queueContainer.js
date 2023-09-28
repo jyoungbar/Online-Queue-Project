@@ -85,7 +85,9 @@ const QueueContainer = () => {
       <ListGroup className="perrow3" horizontal>
       {queueNames.map((name, index) => (
         <ListGroup.Item key={index} className="col" variant="light">
-          <Button className="delete-btn" variant="danger" name={name} onClick={handleDelete}>X</Button>
+          {Cookies.get('admin') == sessionStorage.getItem('meetingid') && (
+            <Button className="delete-btn" variant="danger" name={name} onClick={handleDelete}>X</Button>
+          )}
           <Queue queueName={name} />
         </ListGroup.Item>
       ))}
