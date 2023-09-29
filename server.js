@@ -368,7 +368,6 @@ io.on('connection', (socket) => {
     if(isVoting && socket.rooms.has("voting" + socket.meetingid) || socket.rooms.has("active" + socket.meetingid)) {
       io.to(socket.id).emit('open/close voting'+queueName, isVoting, isRanked, voteOptions/*votes*/);
     } else if(!isVoting) {
-      console.log("upon closing vote");
       io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate"+socket.meetingid).to("none"+socket.meetingid).emit('open/close voting'+queueName, isVoting, isRanked, meetingids.get(socket.meetingid).get(queueName).votes);
       // io.to(socket.id).emit('open/close voting'+queueName, isVoting, isRanked, /*voteOptions*/votes);
     }
@@ -399,7 +398,7 @@ io.on('connection', (socket) => {
     for(var i = 0; i < submittedVotes.length; i++) {
       var foundName = false;
       for(var j = 0; j < meetingids.get(socket.meetingid).get(queueName).votes.length; j++) {
-        if(meetingids.get(socket.meetingid).get(queueName).votes[j][0] == submittedVotes[i].toUpperCase()) {
+        if(meetingids.get(socket.meetingid).get(queueName).votes[j][0].toUpperCase() == submittedVotes[i].toUpperCase()) {
           foundName = true;
           meetingids.get(socket.meetingid).get(queueName).votes[j][1]++;
         }
