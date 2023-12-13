@@ -366,11 +366,13 @@ io.on('connection', (socket) => {
     var votes = meetingids.get(socket.meetingid).get(queueName).votes;
 
     if(isVoting && socket.rooms.has("voting" + socket.meetingid) || socket.rooms.has("active" + socket.meetingid)) {
-      io.to(socket.id).emit('open/close voting'+queueName, isVoting, isRanked, voteOptions/*votes*/);
+      io.to(socket.id).emit('open/close voting'+queueName, isVoting, isRanked, /*voteOptions*/votes);
     } else if(!isVoting) {
       io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate"+socket.meetingid).to("none"+socket.meetingid).emit('open/close voting'+queueName, isVoting, isRanked, meetingids.get(socket.meetingid).get(queueName).votes);
       // io.to(socket.id).emit('open/close voting'+queueName, isVoting, isRanked, /*voteOptions*/votes);
-    }
+    } /*else {
+      io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate"+socket.meetingid).to("none"+socket.meetingid).emit('open/close voting'+queueName, isVoting, isRanked, meetingids.get(socket.meetingid).get(queueName).votes);
+    }*/
   });
 
 
