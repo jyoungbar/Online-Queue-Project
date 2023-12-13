@@ -24,7 +24,8 @@ function MeetingFinder() {
   // var hasID = meetingids.has(meetingid);
   function gethasID() {
     // fetch('http://192.168.1.40:3000/meetingids', {
-    fetch('http://localhost:3000/meetingids', {
+    // fetch('http://localhost:3000/meetingids', {
+    fetch('https://meeting-tool.onrender.com/meetingids', {
       "method": "GET"
     })
       .then(response => response.json())
