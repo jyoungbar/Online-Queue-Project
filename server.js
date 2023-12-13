@@ -17,7 +17,7 @@ const cookie = require('cookie');
 
 const io = require("socket.io")(server, {
   cors: {
-    origin: "http://localhost:3001",
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'https://meeting-tool.onrender.com'],
     methods: ["GET", "POST"]
   },
   // cookie: true
@@ -30,9 +30,9 @@ app.set('views', './views');
 app.set('view engine', 'ejs');
 
 const cors = require('cors');
-app.use(cors(
-    // origin: 'http://localhost:3000'
-));
+app.use(cors({
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'https://meeting-tool.onrender.com']
+}));
 // io.use(cors(
 //   origin: 'http://localhost:3001'
 // ));

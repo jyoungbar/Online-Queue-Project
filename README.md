@@ -71,4 +71,5 @@ https://react-bootstrap.netlify.app/docs/components/
 https://dev.to/yuridevat/how-to-create-a-timer-with-react-7b9
 https://www.geeksforgeeks.org/how-to-navigate-on-path-by-button-click-in-react-router/
 https://stackoverflow.com/questions/23045245/one-line-check-if-socket-is-in-given-room
+https://www.section.io/engineering-education/how-to-use-cors-in-nodejs-with-express/
 

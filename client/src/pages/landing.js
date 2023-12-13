@@ -13,13 +13,13 @@ const Landing = () => {
   const createMeeting = (event) => {
     event.preventDefault();
     var meetingid = Math.floor(Math.random() * 100000000);
-    Cookies.set('admin', meetingid, {expires: 2});
+    Cookies.set('admin', meetingid, {expires: 7});
     // Cookies.set('meetingid', meetingid, {expires: 2});
     sessionStorage.setItem('meeetingid', meetingid);
     // socket.emit('name form', "", "", meetingid);
     console.log(meetingid);
     // fetch('http://192.168.1.40:3000/meetingids', {
-    fetch('http://localhost:10000/meetingids'/*'https://meeting-tool.onrender.com/meetingids'*/, {
+    fetch(/*'http://localhost:3000/meetingids'*/'https://meeting-tool.onrender.com/meetingids', {
       "method": "PUT",
       "headers": { 'Content-Type': 'application/json' },
       "body": JSON.stringify({MeetingID: meetingid})

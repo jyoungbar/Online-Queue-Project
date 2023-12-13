@@ -70,7 +70,7 @@ const NameForm = () => {
     event.preventDefault();
     // var status = 5;
     // console.log(meetingid);
-    if(name != "") {
+    if(name != "" && status < 4) {
       console.log(Cookies.get('meetingid'));
       socket.emit('name form', name, status, /*meetingid*/ /*Cookies.get('meetingid')*/ sessionStorage.getItem("meetingid"));
       sessionStorage.setItem("name", name);
@@ -111,7 +111,7 @@ const NameForm = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <form action="" id="name-form" onSubmit={handleSubmit}>
+          <form action="" id="name-form" onSubmit={(e) => handleSubmit(e)}>
             <label>
               Please enter your name: <br/>
               <input type="text" value={name} onChange={(e) => setName(e.target.value)}/>
