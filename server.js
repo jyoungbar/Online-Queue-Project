@@ -168,6 +168,53 @@ function getNamesByRoom(meetingid) {
   // });
 }
 
+function namesFromIDs(ids, meetingid) {
+  var names = [];
+
+  var votingRoom = io.sockets.adapter.rooms.get("voting" + meetingid);
+  var activeRoom = io.sockets.adapter.rooms.get("active" + meetingid);
+  var assocRoom = io.sockets.adapter.rooms.get("associate" + meetingid);
+  var noneRoom = io.sockets.adapter.rooms.get("none" + meetingid);
+  for(const id of ids) {
+
+    for(const clientId of votingRoom ? votingRoom : []) {
+      const clientSocket = io.sockets.sockets.get(clientId);
+      console.log(clientSocket.userID);
+      console.log(id);
+      if(clientSocket.userID == id.name) {
+        names.push({name: clientSocket.name, id: id.name, tallies: id.tallies});
+      }
+    }
+    for(const clientId of activeRoom ? activeRoom : []) {
+      const clientSocket = io.sockets.sockets.get(clientId);
+      // for(const id of ids) {
+        if(clientSocket.userID == id.name) {
+          names.push({name: clientSocket.name, id: id.name, tallies: id.tallies});
+        }
+      // }
+    }
+    for(const clientId of assocRoom ? assocRoom : []) {
+      const clientSocket = io.sockets.sockets.get(clientId);
+      // for(const id of ids) {
+        if(clientSocket.userID == id.name) {
+          names.push({name: clientSocket.name, id: id.name, tallies: id.tallies});
+        }
+      // }
+    }
+    for(const clientId of noneRoom ? noneRoom : []) {
+      const clientSocket = io.sockets.sockets.get(clientId);
+      // for(const id of ids) {
+        if(clientSocket.userID == id.name) {
+          names.push({name: clientSocket.name, id: id.name, tallies: id.tallies});
+        }
+      // }
+    }
+  }
+
+  return names;
+}
+
+
 // function handleNameForm(name, status) {
 //   var votingNames = [];
 //   var activeNames = [];
@@ -288,26 +335,26 @@ io.on('connection', (socket) => {
     }
     // console.log(queueName);
     // console.log("after popping", speakers);
-    io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('names in queue'+queueName, speakers);
+    io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('names in queue'+queueName, namesFromIDs(speakers, socket.meetingid));
   });
 
   socket.on('join queue', (queueName) => {
-    meetingids.get(socket.meetingid).get(queueName).add(socket.name);
+    meetingids.get(socket.meetingid).get(queueName).add(socket.userID/*name*/);
     var speakers = [];
     if(meetingids.get(socket.meetingid).has(queueName)) {
       speakers = meetingids.get(socket.meetingid).get(queueName).items;
     }
     // console.log(queueName);
-    // console.log("after joining", speakers);
-    io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('names in queue'+queueName, speakers);
+    console.log("after joining", speakers);
+    io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('names in queue'+queueName, namesFromIDs(speakers, socket.meetingid));
   });
 
   socket.on('leave queue', (queueName) => {
-    meetingids.get(socket.meetingid).get(queueName).remove(socket.name);
+    meetingids.get(socket.meetingid).get(queueName).remove(socket.userID/*name*/);
     var speakers = meetingids.get(socket.meetingid).get(queueName).items;
     // console.log(queueName);
     // console.log("after leaving:", speakers);
-    io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('names in queue'+queueName, speakers);
+    io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('names in queue'+queueName, namesFromIDs(speakers, socket.meetingid));
   });
 
   socket.on('get names in queue', (queueName) => {
@@ -318,7 +365,7 @@ io.on('connection', (socket) => {
     }
     // console.log(queueName);
     // console.log("get names in queue:", speakers);
-    io.to(socket.id).emit('names in queue'+queueName, speakers);
+    io.to(socket.id).emit('names in queue'+queueName, namesFromIDs(speakers, socket.meetingid));
   });
 
   socket.on('from admin open/close queue', (queueName, isClosed) => {
@@ -329,7 +376,7 @@ io.on('connection', (socket) => {
   socket.on('remove speaker', (queueName, speaker) => {
     meetingids.get(socket.meetingid).get(queueName).remove(speaker);
     var speakers = meetingids.get(socket.meetingid).get(queueName).items;
-    io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('names in queue'+queueName, speakers);
+    io.to("voting" + socket.meetingid).to("active" + socket.meetingid).to("associate" + socket.meetingid).to("none" + socket.meetingid).emit('names in queue'+queueName, namesFromIDs(speakers, socket.meetingid));
   });
 
   socket.on('from admin open/close voting', (queueName, isVoting, isRanked, voteOptions) => {

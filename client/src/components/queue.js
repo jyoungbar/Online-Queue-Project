@@ -109,7 +109,7 @@ const Queue = ({queueName}) => {
 
   const handleRemove = (e, speaker) => {
     e.preventDefault();
-    socket.emit('remove speaker', queueName, speaker.name);
+    socket.emit('remove speaker', queueName, speaker.id);
   }
 
   return (

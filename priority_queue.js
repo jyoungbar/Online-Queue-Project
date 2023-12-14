@@ -98,6 +98,7 @@ function PriorityQueue() {
 
 	this.remove = (name) => {
 		//make sure name is in items
+		console.log(this.record);
 		if(!this.record.get(name)[1]) {
 			//alert(name + " is not in the queue");
 			return false;
